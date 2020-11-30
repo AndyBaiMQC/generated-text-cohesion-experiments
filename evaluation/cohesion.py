@@ -26,17 +26,17 @@ tokenizer.add_pipe(tokenizer.create_pipe('sentencizer'))
 content_words = r'JJ[RS]*$|NN[PS]*$|RB[RS]*$|VB[DGNPZ]*$'
 
 class Document:
-	def __init__(self, text):
-		self.doc = tokenize(text)
-		self.sentences = [[w for w in s] for s in doc.sents]
-		self.tokens = list(chain(*[w.text.lower() for w in doc if w.pos_ != 'PUNCT']))
+    def __init__(self, text):
+        self.doc = tokenize(text)
+        self.sentences = [[w for w in s] for s in doc.sents]
+        self.tokens = list(chain(*[w.text.lower() for w in doc if w.pos_ != 'PUNCT']))
         self.lemmas = [t.lemma_ for t in self.doc if t.pos_ != 'PUNCT']
         self.V = np.unique(self.tokens)
         self.len = len(self.tokens)
         self.freqs = Counter(self.tokens)
         self.freq_spectrum = dict(Counter(self.freqs.values()))
 
-	def get_ngrams(self, n=2, unit='s'):
+    def get_ngrams(self, n=2, unit='s'):
         if unit == 's':
             return [g for g in ngrams(self.sentences, n)]
         else:
@@ -45,12 +45,12 @@ class Document:
     ######################### Lexical diversity measures #########################
 
     def kl_divergence(self, true_dist):
-    	''' compare this document's word freq dist to a true dist 
-    	using KL-divegence '''
-    	if isinstance(true_dist, dict):
-    		return entropy(self.freq_spectrum, true_dist)
-    	else:
-    		return entropy(self.freq_spectrum, dict(Counter(Counter(true_dist).values())))
+        ''' compare this document's word freq dist to a true dist 
+        using KL-divegence '''
+        if isinstance(true_dist, dict):
+            return entropy(self.freq_spectrum, true_dist)
+        else:
+            return entropy(self.freq_spectrum, dict(Counter(Counter(true_dist).values())))
 
     def get_entropy(self, seq):
         ''' entropy of a sequence of symbols '''
@@ -146,25 +146,25 @@ class Document:
         variant is one of noun, argument, stem, content '''
 
         variants = {
-        	'noun':(r'NN[PS]*', r'NN[PS]*', True),
-        	'argument': (r'NN[PS]*|PRP(\$)*', r'NN[PS]*', True),
-        	'content': (r'NN[PS]*|RB[RS]*|VB[DGNPZ]*', r'NN[PS]*|RB[RS]*|VB[DGNPZ]*', False),
-        	'stem': (r'NN[PS]*|RB[RS]*|VB[DGNPZ]*', r'NN[PS]*', True)
+            'noun':(r'NN[PS]*', r'NN[PS]*', True),
+            'argument': (r'NN[PS]*|PRP(\$)*', r'NN[PS]*', True),
+            'content': (r'NN[PS]*|RB[RS]*|VB[DGNPZ]*', r'NN[PS]*|RB[RS]*|VB[DGNPZ]*', False),
+            'stem': (r'NN[PS]*|RB[RS]*|VB[DGNPZ]*', r'NN[PS]*', True)
         }
 
         def overlap(b1, b2, variant):
-	        tags1, tags2, binary = variants[variant]
-	        if variant != 'stem':
-	        	s1 = [w.text.lower() for w in b1 if re.match(tags1, w.tag_)]
-	        	s2 = [w.text.lower() for w in b2 if re.match(tags2, w.tag_)]
-	        else:
-	        	s1 = [w.lemma_.lower() for w in b1 if re.match(tags1, w.tag_)]
-	        	s2 = [w.text.lower() for w in b2 if re.match(tags2, w.tag_)]
-	        	
-	        if binary:
-	            return len(list(set(s1).intersection(s2))) > 0
-	        else:
-	        	return len(list(set(s1).intersection(s2)))/len(np.unique(sum([s1, s2], [])))
+            tags1, tags2, binary = variants[variant]
+            if variant != 'stem':
+                s1 = [w.text.lower() for w in b1 if re.match(tags1, w.tag_)]
+                s2 = [w.text.lower() for w in b2 if re.match(tags2, w.tag_)]
+            else:
+                s1 = [w.lemma_.lower() for w in b1 if re.match(tags1, w.tag_)]
+                s2 = [w.text.lower() for w in b2 if re.match(tags2, w.tag_)]
+                
+            if binary:
+                return len(list(set(s1).intersection(s2))) > 0
+            else:
+                return len(list(set(s1).intersection(s2)))/len(np.unique(sum([s1, s2], [])))
         
         return [overlap(bi[0], bi[1], variant) for bi in self.get_ngrams(n=2, unit='s')]
 
