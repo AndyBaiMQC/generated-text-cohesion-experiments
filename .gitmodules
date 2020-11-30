@@ -1,0 +1,3 @@
+[submodule "evaluation/lexCH"]
+	path = evaluation/lexCH
+	url = https://github.com/benlebrun/lexCH
