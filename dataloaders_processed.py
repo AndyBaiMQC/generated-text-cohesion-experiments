@@ -5,7 +5,7 @@ import tensorflow as tf
 import numpy as np
 import unicodedata
 import config as cfg
-from tensorflow.keras.preprocessing.sequence import pad_sequences
+# from tensorflow.keras.preprocessing.sequence import pad_sequences
 from sklearn.model_selection import train_test_split
 
 

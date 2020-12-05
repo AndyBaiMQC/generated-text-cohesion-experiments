@@ -1,13 +1,22 @@
 import time
 import random
 import argparse
-import tensorflow as tf
+# import tensorflow as tf
 from Transformers_Google import create_masks, CustomSchedule, Transformer
 from dataloaders_processed import load_data, dataloader_unaligned
 from evaluation import generate_evaluations, get_scores
 import config as cfg
 
-loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, reduction='none')
+import torch
+import torchvision
+import torch.nn as nn
+from torch.optim import lr_scheduler
+from torchvision import datasets, models, transforms
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+
+# loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, reduction='none')
+
 
 
 def max_length(tensor):
